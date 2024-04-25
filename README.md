@@ -32,8 +32,6 @@ Checkout the [contributing and setup docs](CONTRIBUTING.md)
 
 # Contact
 
-For all enquiries please contact dev@oliverbutler.uk will be available soon.
-
 <a href="https://vercel.com?utm_source=xeo&utm_campaign=oss" style="display:block;text-align:center;margin-top:50px">
     <img width="200px" height="auto" src="./assets/powered-by-vercel.svg" alt="vercel logo" />
 </a>
