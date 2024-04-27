@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth';
+import { authOptions } from "pages/api/auth/[...nextauth]"
 
-import { getSession } from 'next-auth/react';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 
 export type NotionOAuthCallbackState = {
@@ -26,7 +27,7 @@ export const isNotionAuthCallbackState = (
 export type GetNotionAuthURL = APIGetRequest<{ url: string }>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

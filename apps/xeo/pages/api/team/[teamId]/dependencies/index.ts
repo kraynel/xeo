@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
-import { getSession } from 'next-auth/react';
 import { getUserRoleInTeam } from 'utils/db/team/adapter';
 import {
   DependencyPosition,
@@ -10,6 +9,8 @@ import {
 } from 'utils/db/sprint/adapter';
 import Joi from 'joi';
 import { getNotionEpicForTeam } from 'utils/db/epic/adapter';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 
 export type PutUpdateSprintDependencies = APIRequest<
   {
@@ -37,7 +38,7 @@ const putSchema: PutUpdateSprintDependencies['joiBodySchema'] = Joi.object({
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

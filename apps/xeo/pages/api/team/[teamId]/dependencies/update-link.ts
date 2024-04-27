@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
-import { getSession } from 'next-auth/react';
 import {
   getTeamWithConnection,
   getUserRoleInTeam,
@@ -8,6 +7,8 @@ import {
 import Joi from 'joi';
 import { createLinkBetweenTickets } from 'utils/notion/ticket';
 import { NotionConnection, NotionDatabase } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 
 export type PostCreateNotionTicketLink = APIRequest<
   {
@@ -25,7 +26,7 @@ const putSchema: PostCreateNotionTicketLink['joiBodySchema'] = Joi.object({
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

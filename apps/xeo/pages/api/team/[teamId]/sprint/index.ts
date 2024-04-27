@@ -1,12 +1,13 @@
 import { Sprint, SprintHistory, SprintStatusHistory } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import { createSprint, CreateSprint } from 'utils/db/sprint/adapter';
 import { getUserRoleInTeam } from 'utils/db/team/adapter';
 
 import { TIME_REGEX } from './[sprintId]';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 
 export type SprintWithHistory = Sprint & {
   sprintHistory: (SprintHistory & {
@@ -40,7 +41,7 @@ const postSchema: PostCreateSprintRequest['joiBodySchema'] = Joi.object({
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

@@ -1,6 +1,7 @@
 import { NotionDatabase, NotionStatusLink } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
 import {
   getNotionConnectionForTeam,
@@ -17,7 +18,7 @@ export type NotionDatabaseWithStatusLinks = NotionDatabase & {
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return res.status(401).json({ message: 'Not authenticated' });

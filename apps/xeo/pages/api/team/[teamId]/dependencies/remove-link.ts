@@ -1,17 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
-import { getSession } from 'next-auth/react';
 import {
   getTeamWithConnection,
   getUserRoleInTeam,
 } from 'utils/db/team/adapter';
-import {
-  getSprintForTeamWithDatabaseAndConnection,
-  SprintWithTeamAndConnectionAndDatabase,
-} from 'utils/db/sprint/adapter';
 import Joi from 'joi';
 import { removeLinkBetweenTickets } from 'utils/notion/ticket';
 import { NotionConnection, NotionDatabase } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 
 export type PostRemoveNotionTicketLink = APIRequest<
   {
@@ -29,7 +26,7 @@ const putSchema: PostRemoveNotionTicketLink['joiBodySchema'] = Joi.object({
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

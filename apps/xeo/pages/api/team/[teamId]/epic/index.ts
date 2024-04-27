@@ -1,7 +1,8 @@
 import { NotionEpic } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import { createNotionEpic } from 'utils/db/epic/adapter';
 import { getNotionDatabase } from 'utils/db/notionDatabase/adapter';
@@ -29,7 +30,7 @@ const postSchema: PostCreateNotionEpicRequest['joiBodySchema'] = Joi.object({
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

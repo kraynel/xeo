@@ -1,13 +1,14 @@
 import { UserMetadata, UserRole } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
 import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import {
   createUserMetadata,
   CreateUserMetadata,
   getUserWithMetadata,
 } from 'utils/db/user/adapter';
+import { authOptions } from '../auth/[...nextauth]';
 
 export type PostCreateUserRequest = APIRequest<
   {
@@ -28,7 +29,7 @@ const postSchema: PostCreateUserRequest['joiBodySchema'] = Joi.object({
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

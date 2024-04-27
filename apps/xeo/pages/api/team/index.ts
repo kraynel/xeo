@@ -1,7 +1,6 @@
 import { Team } from '@prisma/client';
 import Joi from 'joi';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import {
   apiError,
   APIGetRequest,
@@ -15,6 +14,8 @@ import {
   getTeamsForUser,
   TeamWithMemberAndBasicUserInfo,
 } from 'utils/db/team/adapter';
+import { authOptions } from '../auth/[...nextauth]';
+import { getServerSession } from 'next-auth';
 
 export type CreateTeamRequest = APIRequest<
   { input: CreateTeam },
@@ -26,7 +27,7 @@ export type GetTeamsForUserRequest = APIGetRequest<{
 }>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

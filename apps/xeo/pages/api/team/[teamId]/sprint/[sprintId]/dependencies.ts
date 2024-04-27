@@ -1,19 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
-import { getSession } from 'next-auth/react';
 import { getUserRoleInTeam } from 'utils/db/team/adapter';
 import {
   DependencyPosition,
   getSprintDependencies,
   getSprintForTeam,
 } from 'utils/db/sprint/adapter';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 
 export type GetSprintDependencies = APIGetRequest<{
   dependencies: DependencyPosition[];
 }>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
 
 import { apiError, APIGetRequest, apiResponse } from 'utils/api';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]';
 
 export type GetUserSearchRequest = APIGetRequest<{
   user: {
@@ -14,7 +15,7 @@ export type GetUserSearchRequest = APIGetRequest<{
 }>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return apiError(res, { message: 'Not authenticated' }, 401);

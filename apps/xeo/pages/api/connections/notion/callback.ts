@@ -4,10 +4,11 @@ import { apiError, APIRequest, apiResponse, parseAPIRequest } from 'utils/api';
 import Joi from 'joi';
 import { exchangeCodeForAccessToken } from 'utils/connections/notion/notion-client';
 import { NotionOAuthCallbackState } from './auth-url';
-import { getSession } from 'next-auth/react';
 import { prisma } from 'utils/db';
 import { getUserRoleInTeam } from 'utils/db/team/adapter';
 import { TeamRole } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from 'pages/api/auth/[...nextauth]';
 
 export type PostNotionCallback = APIRequest<
   { code: string; state: NotionOAuthCallbackState },
@@ -23,7 +24,7 @@ const schema: PostNotionCallback['joiBodySchema'] = Joi.object({
 });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
     return res.status(401).json({ message: 'Not authenticated' });
